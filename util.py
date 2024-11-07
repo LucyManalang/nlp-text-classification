@@ -19,7 +19,7 @@ def precision[T](true_labels : Sequence[T], predicted_labels : Sequence[T]) -> f
     return 0.0
 
 def recall[T](true_labels : Sequence[T], predicted_labels : Sequence[T]) -> float: 
-    """ Compute the precision of a model given the true labels and predicted labels
+    """ Compute the recall of a model given the true labels and predicted labels
         Note that T is a generic type
     """
     return 0.0
