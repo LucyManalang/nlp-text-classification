@@ -2,11 +2,11 @@ import numpy as np
 from typing import Sequence, Mapping, Iterable
 
 class NBBaseline:
-    def __init__(self, train_data : Mapping[str, Sequence[str]]):
-        self.classes = train_data.keys()
+    def __init__(self, train_data : Mapping[Sequence[str], str]):
+        self.classes = set(train_data.values())
         self.ulm = train_data
         
-        self.vocab = set(train_data.values())
+        self.vocab = set(train_data.keys())
         
         self.vocab_size = len(self.vocab)
 

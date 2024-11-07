@@ -2,6 +2,7 @@ import torch
 import argparse
 from data import *
 from NBBaseline import NBBaseline
+from util import *
 
 parser = argparse.ArgumentParser()
 
@@ -20,11 +21,23 @@ args = parser.parse_args()
 
 if args.task == "imdb":
     dataset = IMDBData(args.data)
-    
+    train_data = dataset.get_train_examples()
+
+    train_dict = {}
+    for example in train_data:
+        if example[1] == 0:
+            train_dict[0] = "neg"
+        else:
+            train_dict[0] = "pos"
+    bayes_baseline = NBBaseline(train_dict)
     # TODO: Consult the provided IMDBData class to see how data is stored
 
 elif args.task == "author-id":
     dataset = AuthorIDData(args.data)
     
     # TODO: Consult the provided AuthorIDData class to see how data is stored
+
+# if args.measure == "acc":
+
+    # TODO: Implement this measure
 

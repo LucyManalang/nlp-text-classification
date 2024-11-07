@@ -10,6 +10,7 @@ class IMDBData:
     def __init__(self, data_path : str):
         self.labels = {"neg":0,
                        "pos":1}
+        
         self.train = self.load_data(data_path + "train/{}.txt")
         self.dev = self.load_data(data_path + "dev/{}.txt")
         self.test = self.load_unlabeled_data(data_path + "test/test.txt")
