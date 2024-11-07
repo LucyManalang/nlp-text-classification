@@ -27,7 +27,7 @@ class IMDBData:
         return out
 
     def load_unlabeled_data(self, data_path :str) -> Iterable[Sequence[str]]:
-        """ Load unlabeledi (i.e., test) data from the provided file path.
+        """ Load unlabeled (i.e., test) data from the provided file path.
         """
         out = []
         with open(data_path) as data_f:

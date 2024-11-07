@@ -1,14 +1,22 @@
 import numpy as np
 from typing import Sequence, Mapping, Iterable
+from data import *
 
 class NBBaseline:
-    def __init__(self, train_data : Mapping[Sequence[str], str]):
-        self.classes = set(train_data.values())
-        self.ulm = train_data
-        
-        self.vocab = set(train_data.keys())
-        
+    def __init__(self, train_data : Iterable[tuple[Sequence[str], int]]):
+        self.classes = set([c for _, c in train_data])
+
+        self.vocab = set()
+        self.class_data = {}
+        for t in train_data:
+            self.vocab.update(t[0])
+            self.class_data[t[1]] = self.class_data.get(t[1], []) + t[0]
+
         self.vocab_size = len(self.vocab)
+
+        self.ulm = {}
+        for c in self.class_data:
+            self.ulm[c] = self.get_logfreqs(self.class_data[c])
 
     def get_logfreqs(self, data : Iterable[str]) -> Mapping[str, int]: 
         counts = {}
@@ -25,7 +33,7 @@ class NBBaseline:
         
         return logprobs
 
-    def label(self, data : Iterable[str]) -> str:
+    def label(self, data : Iterable[str]) -> int:
         log_likelihoods = {}
         for c in self.classes:
             log_likelihood = 0

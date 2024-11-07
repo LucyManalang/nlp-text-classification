@@ -23,13 +23,12 @@ if args.task == "imdb":
     dataset = IMDBData(args.data)
     train_data = dataset.get_train_examples()
 
-    train_dict = {}
+    data = [] # needed to convert the generator to a list because it was not iterating in the baseline class
     for example in train_data:
-        if example[1] == 0:
-            train_dict[0] = "neg"
-        else:
-            train_dict[0] = "pos"
-    bayes_baseline = NBBaseline(train_dict)
+        data.append(example)
+    
+    bayes_baseline = NBBaseline(data)
+    print(bayes_baseline.label("elvira mistress of the dark is one of my fav movies , it has every thing you would want in a film , like great one liners , sexy star and a outrageous story ! if you have not seen it , you are missing out on one of the greatest films made . i ca n't wait till her new movie comes out !".split()))
     # TODO: Consult the provided IMDBData class to see how data is stored
 
 elif args.task == "author-id":
@@ -37,7 +36,10 @@ elif args.task == "author-id":
     
     # TODO: Consult the provided AuthorIDData class to see how data is stored
 
-# if args.measure == "acc":
+if args.measure == "acc":
+    #accuracy[T](true_labels : Sequence[T], predicted_labels : Sequence[T]) -> float:
+    # unlabeled_data = 
+    print("unlabeled data")
 
     # TODO: Implement this measure
 
