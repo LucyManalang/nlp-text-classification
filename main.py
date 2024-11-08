@@ -28,7 +28,7 @@ if args.task == "imdb":
         data.append(example)
     
     bayes_baseline = NBBaseline(data)
-    print(bayes_baseline.label("elvira mistress of the dark is one of my fav movies , it has every thing you would want in a film , like great one liners , sexy star and a outrageous story ! if you have not seen it , you are missing out on one of the greatest films made . i ca n't wait till her new movie comes out !".split()))
+    print(bayes_baseline.label("you look lovely today".split()))
     # TODO: Consult the provided IMDBData class to see how data is stored
 
 elif args.task == "author-id":

@@ -10,13 +10,13 @@ class NBBaseline:
         self.class_data = {}
         for t in train_data:
             self.vocab.update(t[0])
-            self.class_data[t[1]] = self.class_data.get(t[1], []) + t[0]
 
         self.vocab_size = len(self.vocab)
 
         self.ulm = {}
-        for c in self.class_data:
-            self.ulm[c] = self.get_logfreqs(self.class_data[c])
+        for c in self.classes:
+            ulm_class = [t[0] for t in train_data if t[1] == c]
+            self.ulm[c] = self.get_logfreqs([item for sublist in ulm_class for item in sublist])
 
     def get_logfreqs(self, data : Iterable[str]) -> Mapping[str, int]: 
         counts = {}
