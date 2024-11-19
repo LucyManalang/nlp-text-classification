@@ -44,7 +44,6 @@ class IMDBData:
     def get_dev_examples(self) -> Iterable[tuple[Sequence[str], int]]:
         """ Return an iterator over development examples (i.e., (data, label) pairs)
         """
-
         for example in self.dev:
             yield example
 
