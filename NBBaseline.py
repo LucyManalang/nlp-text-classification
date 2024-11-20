@@ -11,13 +11,14 @@ class NBBaseline:
         self.vocab = set()
         for t in train_data:
             self.vocab.update(t[0])
-        
+
         self.ulm = {} # key = class, value = log-frequency map of words in that class
         for c in self.classes: # split data into classes
             class_data = [t[0] for t in train_data if t[1] == c] # a 2d list of all the words in the class, split by sentence
             self.ulm[c] = self.get_logfreqs(c, [item for sublist in class_data for item in sublist]) # flatten list
 
-    def get_logfreqs(self, c: int, data : Iterable[str]) -> Mapping[str, int]: 
+    # Computes Log Freqeuncies for each word (lapace smoothing)
+    def get_logfreqs(self, c: int, data : Iterable[str]) -> Mapping[str, int]:
         total = 0
         counts = {}
         for w in data:
@@ -30,9 +31,10 @@ class NBBaseline:
         for w in self.vocab:
             smoothed_count = counts.get(w, 0) + 1 # second part to laplace smoothing
             logprobs[w] = np.log(smoothed_count / smoothed_total)
-        
+
         return logprobs
 
+    # Computes the posterior, in this case the dataset is balanced so the likelihood is the posterior
     def label(self, data : Iterable[str]) -> int:
         log_likelihoods = {}
         for c in self.classes:

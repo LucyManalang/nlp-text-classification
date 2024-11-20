@@ -7,9 +7,9 @@ from util import *
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--data", type=str, help="path to the data folder") 
-parser.add_argument("--task", type=str, help="task (imdb or author-id)") 
-parser.add_argument("--model", type=str, help="task (baseline, submission, or ...)") 
+parser.add_argument("--data", type=str, help="path to the data folder")
+parser.add_argument("--task", type=str, help="task (imdb or author-id)")
+parser.add_argument("--model", type=str, help="task (baseline, submission, or ...)")
 
 # Implement these if you find them helpful --- I will train your model's from scratch
 parser.add_argument("--save", type=str, help="path to model file to save")
@@ -39,11 +39,11 @@ if args.measure == "acc":
     labeled_data = list(dataset.get_dev_examples())
     true_labels = set([(" ".join(t[0]), t[1]) for t in labeled_data])
     true_data = set([" ".join(t[0]) for t in labeled_data]) # used to filter out relevant data
-    
+
     unlabeled_data = [sentence.split() for sentence in list(dataset.get_test_examples())]
     relevant_data = [sentence for sentence in unlabeled_data if " ".join(sentence) in true_data] # because dev data does not contain all of test data, filtering out relevant data is necessary
     predicted_labels = [(" ".join(sentence), model.label(sentence)) for sentence in relevant_data]
-    
+
     print("acc: {:.3}".format(100 *accuracy(true_labels, predicted_labels)))
 
 
