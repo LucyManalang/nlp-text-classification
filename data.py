@@ -4,13 +4,13 @@ import os
 import json
 
 class IMDBData:
-    """ A class to store data from the IMDB Dataset. 
+    """ A class to store data from the IMDB Dataset.
     """
 
     def __init__(self, data_path : str):
         self.labels = {"neg":0,
                        "pos":1}
-        
+
         self.train = self.load_data(data_path + "train/{}.txt")
         self.dev = self.load_data(data_path + "dev/{}.txt")
         self.test = self.load_unlabeled_data(data_path + "test/test.txt")
@@ -48,7 +48,7 @@ class IMDBData:
             yield example
 
     def get_test_examples(self) -> Iterable[Sequence[str]]:
-        """ Return an iterator over test examples (no labels!) 
+        """ Return an iterator over test examples (no labels!)
         """
         for example in self.test:
             yield example
@@ -61,15 +61,15 @@ class AuthorIDData:
         self.problems = []
         self.train_probs = self.load_data(data_path + "train/")
 
-        # Target labels will be "unknown" for test data! 
+        # Target labels will be "unknown" for test data!
         self.test_probs = self.load_data(data_path + "test/")
 
-    def load_data(self, data_path : str) -> Iterable[tuple[Mapping[str, Sequence[Sequence[str]]], 
-                                                           Iterable[Sequence[str]], 
+    def load_data(self, data_path : str) -> Iterable[tuple[Mapping[str, Sequence[Sequence[str]]],
+                                                           Iterable[Sequence[str]],
                                                            Iterable[str]]]:
         """ Load data for a set of problems from the provided file path
 
-            Parses file structure using the provided JSON files. 
+            Parses file structure using the provided JSON files.
         """
 
         problems = []
@@ -80,11 +80,11 @@ class AuthorIDData:
 
         for problem in task_info:
             problem_path = data_path + "{}/".format(problem["problem-name"])
-            
+
             problem_info = None
             with open(problem_path + "problem-info.json") as in_f:
                 problem_info = json.load(in_f)
-            
+
             candidates = {}
             for candidate in problem_info["candidate-authors"]:
                 author_path = problem_path + "{}/".format(candidate["author-name"])
@@ -108,9 +108,9 @@ class AuthorIDData:
 
             problems.append((candidates, target_docs, target_labels))
             return problems
-    
+
     def get_train_problems(self):
-        """ Return an iterator over training problems, each of which is a triplet 
+        """ Return an iterator over training problems, each of which is a triplet
             (training data, target documents, labels)
 
             training data       - a dictionary matching candidate authors to documents written by them
