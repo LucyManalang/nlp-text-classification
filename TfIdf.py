@@ -4,7 +4,6 @@ from collections import Counter
 
 class TfIdf:
     def __init__(self, train_data : Iterable[Tuple[Sequence[str], int]]):
-        train_data = [("good boy".split(), 0), ("good girl".split(), 1), ("boy girl good".split(), 2)]
         self.classes = set([c for _, c in train_data])
 
         # raw data for each class
