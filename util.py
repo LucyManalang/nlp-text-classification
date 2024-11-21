@@ -6,7 +6,7 @@ def accuracy(true_labels : set[tuple[str, int]], predicted_labels : Sequence[tup
     return correct / len(predicted_labels)
 
 def recall[T](true_labels : Sequence[T], predicted_labels : Sequence[T]) -> float: 
-    """ Compute the f1 of a model given the true labels and predicted labels
+    """ Compute the recall of a model given the true labels and predicted labels
         Note that T is a generic type
     """
     if len(true_labels) != len(predicted_labels):
