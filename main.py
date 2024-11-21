@@ -31,7 +31,7 @@ if args.task == "imdb":
         model = TfIdf(train_data)
 
     labeled_data = list(dataset.get_dev_examples())
-    true_labels = set([(" ".join(t[0]), t[1]) for t in labeled_data])
+    true_labels = [(" ".join(t[0]), t[1]) for t in labeled_data]
     unlabeled_data = [t[0] for t in labeled_data]
     predicted_labels = [(" ".join(sentence), model.label(sentence)) for sentence in unlabeled_data]
     if args.measure == "acc":
@@ -41,8 +41,7 @@ if args.task == "imdb":
     elif args.measure == "recall":
         print("recall: {:.3}".format(100 * recall(true_labels, predicted_labels))) #TODO
     elif args.measure == "f1":
-        # print("f1: {:.3}".format(100 * f1(true_labels, predicted_labels))) #TODO
-        print("todo")
+        print("f1: {:.3}".format(100 * f1(true_labels, predicted_labels))) #TODO
 
 elif args.task == "author-id":
     dataset = AuthorIDData("/data/author-id/") 
