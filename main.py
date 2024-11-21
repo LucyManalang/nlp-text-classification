@@ -27,7 +27,8 @@ if args.task == "imdb":
     train_data = list(dataset.get_train_examples())
 elif args.task == "author-id":
     dataset = AuthorIDData(args.data)
-    # TODO: Consult the provided AuthorIDData class to see how data is stored
+    train_data = list(dataset.get_train_problems()) # this type is rediculous
+    train_data = [item for sublist in train_data for item in sublist]
 
 
 if args.model == "baseline":
@@ -40,6 +41,6 @@ if args.measure == "acc":
     true_labels = set([(" ".join(t[0]), t[1]) for t in labeled_data])
 
     unlabeled_data = [t[0] for t in labeled_data]
-    # predicted_labels = [(" ".join(sentence), model.label(sentence)) for sentence in unlabeled_data]
-    # model.label("this is a postive sentence good amazing loved")
-    # print("acc: {:.3}".format(100 * accuracy(true_labels, predicted_labels)))
+    predicted_labels = [(" ".join(sentence), model.label(sentence)) for sentence in unlabeled_data]
+    print(model.label("enchanted april is a tone poem , an impressionist painting , a masterpiece of conveying a message with few words . it has been one of my 10 favorite films since it came out . i continue to wait , albeit less patiently , for the film to come out in dvd format . apparently , i am not alone . if parent company amazon 's listings are correct , there are many people who want this title in dvd format . many people want to go to italy with this cast and this script . many people want to keep a permanent copy of this film in their libraries . the cast is spectacular , the cinematography and direction impeccable . the film is a definite keeper . many have already asked . please add our names to the list ."))
+    print("acc: {:.3}".format(100 * accuracy(true_labels, predicted_labels)))

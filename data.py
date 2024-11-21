@@ -107,7 +107,7 @@ class AuthorIDData:
 
 
             problems.append((candidates, target_docs, target_labels))
-            return problems
+        return problems
     
     def get_train_problems(self):
         """ Return an iterator over training problems, each of which is a triplet 
@@ -118,7 +118,7 @@ class AuthorIDData:
             labels              - a list of the corresponding gold labels for target documents
         """
 
-        for problem in self.train_problems:
+        for problem in self.train_probs:
             yield problem
 
     def get_test_problems(self):
@@ -128,5 +128,5 @@ class AuthorIDData:
             target documents    - a list of documents that should be labeled
         """
 
-        for candidates, target_docs, _ in self.test_problems:
+        for candidates, target_docs, _ in self.test_probs:
             yield candidates, target_docs   # For a test case, the labels are all "unknown"
