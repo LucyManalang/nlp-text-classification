@@ -105,7 +105,6 @@ class AuthorIDData:
                     target_docs.append(in_f.read().split())
                 target_labels.append(trial["true-author"])
 
-
             problems.append((candidates, target_docs, target_labels))
         return problems
     

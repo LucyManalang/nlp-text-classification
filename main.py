@@ -23,23 +23,46 @@ args = parser.parse_args()
 
 
 if args.task == "imdb":
-    dataset = IMDBData(args.data)
+    dataset = IMDBData("data/imdb/") #having an args.data is redundant
     train_data = list(dataset.get_train_examples())
-elif args.task == "author-id":
-    dataset = AuthorIDData(args.data)
-    train_data = list(dataset.get_train_problems()) # this type is rediculous
-    train_data = [item for sublist in train_data for item in sublist]
+    if args.model == "baseline":
+        model = NBBaseline(train_data)
+    elif args.model == "tfidf":
+        model = TfIdf(train_data)
 
-
-if args.model == "baseline":
-    model = NBBaseline(train_data)
-elif args.model == "tfidf":
-    model = TfIdf(train_data)
-
-if args.measure == "acc":
     labeled_data = list(dataset.get_dev_examples())
     true_labels = set([(" ".join(t[0]), t[1]) for t in labeled_data])
     unlabeled_data = [t[0] for t in labeled_data]
     predicted_labels = [(" ".join(sentence), model.label(sentence)) for sentence in unlabeled_data]
-    print(model.label("enchanted april is a tone poem , an impressionist painting , a masterpiece of conveying a message with few words . it has been one of my 10 favorite films since it came out . i continue to wait , albeit less patiently , for the film to come out in dvd format . apparently , i am not alone . if parent company amazon 's listings are correct , there are many people who want this title in dvd format . many people want to go to italy with this cast and this script . many people want to keep a permanent copy of this film in their libraries . the cast is spectacular , the cinematography and direction impeccable . the film is a definite keeper . many have already asked . please add our names to the list ."))
-    print("acc: {:.3}".format(100 * accuracy(true_labels, predicted_labels)))
+    if args.measure == "acc":
+        print("acc: {:.3}".format(100 * accuracy(true_labels, predicted_labels))) 
+    elif args.measure == "precision":
+        print("precision: {:.3}".format(100 * precision(true_labels, predicted_labels))) #TODO
+    elif args.measure == "recall":
+        print("recall: {:.3}".format(100 * recall(true_labels, predicted_labels))) #TODO
+    elif args.measure == "f1":
+        # print("f1: {:.3}".format(100 * f1(true_labels, predicted_labels))) #TODO
+        print("todo")
+
+elif args.task == "author-id":
+    dataset = AuthorIDData("/data/author-id/") 
+    train_data = list(dataset.get_train_problems()) 
+    train_problems = []
+    for triplet in train_data:
+        problem = []
+        for candidate, data in triplet[0].items():
+            for sequence in data:
+                problem.append((sequence, int(candidate[-5:])))
+        train_problems.append(problem)
+            
+    models = []
+    for problem in train_problems:
+        if args.model == "baseline":
+            models.append(NBBaseline(problem))
+        elif args.model == "tfidf":
+            models.append(TfIdf(problem))
+    
+    
+    
+
+
