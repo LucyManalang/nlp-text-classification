@@ -17,7 +17,7 @@ class NBBaseline:
             class_data = [t[0] for t in train_data if t[1] == c] # a 2d list of all the words in the class, split by sentence
             self.ulm[c] = self.get_logfreqs(c, [item for sublist in class_data for item in sublist]) # flatten list
 
-    # Computes Log Freqeuncies for each word (lapace smoothing)
+    # computes Log Freqeuncies for each word (lapace smoothing)
     def get_logfreqs(self, c: int, data : Iterable[str]) -> Mapping[str, int]:
         total = 0
         counts = {}
@@ -30,7 +30,7 @@ class NBBaseline:
         logprobs = {}
         for w in self.vocab:
             smoothed_count = counts.get(w, 0) + 1 # second part to laplace smoothing
-            logprobs[w] = np.log(smoothed_count / smoothed_total)
+            logprobs[w] = np.log(smoothed_count) - np.log(smoothed_total)
 
         return logprobs
 
@@ -40,7 +40,7 @@ class NBBaseline:
         for c in self.classes:
             log_likelihood = 0
             for w in data:
-                log_likelihood += self.ulm[c].get(w, np.log(1 / self.smoothed_totals[c])) # default log-frequency of unknown words
+                log_likelihood += self.ulm[c].get(w, -np.log(self.smoothed_totals[c])) # default log-frequency of unknown words
             log_likelihoods[c] = log_likelihood
 
         return max(log_likelihoods, key=log_likelihoods.get)

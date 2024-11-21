@@ -37,11 +37,11 @@ if args.task == "imdb":
     if args.measure == "acc":
         print("acc: {:.3}".format(100 * accuracy(true_labels, predicted_labels))) 
     elif args.measure == "precision":
-        print("precision: {:.3}".format(100 * precision(true_labels, predicted_labels))) #TODO
+        print("precision: {:.3}".format(100 * precision(true_labels, predicted_labels))) 
     elif args.measure == "recall":
-        print("recall: {:.3}".format(100 * recall(true_labels, predicted_labels))) #TODO
+        print("recall: {:.3}".format(100 * recall(true_labels, predicted_labels))) 
     elif args.measure == "f1":
-        print("f1: {:.3}".format(100 * f1(true_labels, predicted_labels))) #TODO
+        print("f1: {:.3}".format(100 * f1(true_labels, predicted_labels))) 
 
 elif args.task == "author-id":
     dataset = AuthorIDData("/data/author-id/") 
