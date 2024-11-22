@@ -49,6 +49,8 @@ if args.task == "imdb":
 elif args.task == "author-id":
     dataset = AuthorIDData("data/author-id/") 
     train_data = list(dataset.get_train_problems()) 
+
+    # stores training data in a list by problem
     train_problems = []
     for triplet in train_data:
         problem = []
@@ -57,6 +59,7 @@ elif args.task == "author-id":
                 problem.append((sequence, int(candidate[-5:]) - 1))
         train_problems.append(problem)
             
+    # stores models in a list by problem, the index of the model corresponds to the index of the problem
     models = []
     for problem in train_problems:
         if args.model == "baseline":
@@ -66,6 +69,7 @@ elif args.task == "author-id":
         elif args.model == "tfidf-scikit":
             models.append(TfIdf(problem, scikit_learn=True))
     
+    # stores test data in a list by problem, the index of the problem corresponds to the index of the model and problem
     test_data = list(dataset.get_test_problems())
     test_problems = []
     for triplet in test_data:
@@ -75,12 +79,18 @@ elif args.task == "author-id":
                 problem.append((sequence, int(candidate[-5:]) - 1))
         test_problems.append(problem)
     
+    total_f1 = 0
+    
+    # the index-based storage of the test data and the models allows us to zip them together
     for problem, model in zip(test_problems, models):
         true_labels = [(t[0], t[1]) for t in problem]
         true_candidates = {t[1] : [] for t in true_labels}
         for t in true_labels:
             true_candidates[t[1]].append(t)
         
+        problem_f1 = 0
+
+        # measure the performance of the model (for each problem)
         for candidate in true_candidates.values():
             predicted_labels = [(t[0], model.label(t[0])) for t in candidate]
             if args.measure == "acc":
@@ -89,22 +99,14 @@ elif args.task == "author-id":
                 print("precision: {:.3}".format(100 * precision(candidate, predicted_labels)))
             if args.measure == "recall":
                 print("recall: {:.3}".format(100 * recall(candidate, predicted_labels)))
+            if args.measure == "f1":
+                problem_f1 += f1(candidate, predicted_labels)
             if args.measure == "debug":
                 print(debug(candidate, predicted_labels))
+        total_f1 += problem_f1 / len(true_candidates)
     
+    # f1 is macro-averaged across all problems, so it is calculated sepera
     if args.measure == "f1":
-        total_f1 = 0
-        for problem, model in zip(test_problems, models):
-            true_labels = [(t[0], t[1]) for t in problem]
-            true_candidates = {t[1] : [] for t in true_labels}
-            for t in true_labels:
-                true_candidates[t[1]].append(t)
-
-            problem_f1 = 0
-            for candidate in true_candidates.values():
-                predicted_labels = [(t[0], model.label(t[0])) for t in candidate]
-                problem_f1 += f1(candidate, predicted_labels)
-            total_f1 += problem_f1 / len(true_candidates)
         total_f1 /= len(test_problems)
         print("f1: {:.3}".format(100 * total_f1))
                 

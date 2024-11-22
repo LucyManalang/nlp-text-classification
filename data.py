@@ -1,5 +1,4 @@
 from typing import Iterable, Sequence, Mapping
-import torch
 import os
 import json
 
@@ -8,8 +7,7 @@ class IMDBData:
     """
 
     def __init__(self, data_path : str):
-        self.labels = {"neg":0,
-                       "pos":1}
+        self.labels = {"neg":0, "pos":1}
 
         self.train = self.load_data(data_path + "train/{}.txt")
         self.dev = self.load_data(data_path + "dev/{}.txt")

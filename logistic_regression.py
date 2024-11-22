@@ -26,5 +26,6 @@ class LogisticRegression(nn.Module): # used https://pytorch.org/tutorials/beginn
                 for param in self.parameters():
                     param -= loss * param.grad
 
+            #for debugging
             # if epoch % 10 == 0:
             #     print("Epoch {} | Loss: {:.4}".format(epoch, loss))

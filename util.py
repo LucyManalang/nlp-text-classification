@@ -69,7 +69,7 @@ def f1(true_labels : Sequence[tuple[Iterable[str], int]], predicted_labels : Seq
     
     return true_positives / (actual_positives + predicted_positives) 
 
-def debug(true_labels : Sequence[tuple[Iterable[str], int]], predicted_labels : Sequence[tuple[Iterable[str], int]]) -> None:
+def debug(true_labels : Sequence[tuple[Iterable[str], int]], predicted_labels : Sequence[tuple[Iterable[str], int]]) -> float:
     if len(true_labels) != len(predicted_labels):
         raise ValueError("Length of true_labels and predicted_labels must match")
     if len(true_labels) == 0:

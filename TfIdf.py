@@ -47,8 +47,10 @@ class TfIdf:
 
         for word, count in frequencies.items():
             if word in self.vocab:
+                # term_freq = log(count / max_freq)
                 term_freq[self.vocab[word]] = (1 + math.log(count)) / max_freq
-
+        
+        # we want to be returning a term frequency vector that is the size of the vocabulary so it can be multiplied by the IDF vector
         return term_freq
     
     def inverse_document_frequency(self) -> torch.Tensor:
@@ -56,24 +58,32 @@ class TfIdf:
         epsilon = 1e-6 # avoids log(0)
 
         for word in self.vocab:
-            doc_freq = sum(1 for v in self.class_vocab.values() if word in v)
+            # idf = log(total_docs / (1 + doc_freq))
+            doc_freq = sum(1 for v in self.class_vocab.values() if word in v) 
             idf[self.vocab[word]] = math.log((len(self.class_data) + epsilon) / (1 + doc_freq))
+
+        # we want to be returning an IDF vector that is the size of the vocabulary so it can be multiplied by the term frequency vector
         return idf
     
     def compute_tfidf_vector(self, data: Sequence[str]) -> torch.Tensor:
         term_freq = self.term_frequency(data)
         
-        tfidf_vector = term_freq * self.idf # multiply by IDF
+        # multiply by IDF
+        tfidf_vector = term_freq * self.idf 
         return tfidf_vector
 
     def label(self, data : Iterable[str]) -> int:
         self.model.eval()  
         with torch.no_grad():
             if self.skikit_learn:
+                #convert to tfidf vector
                 tfidf_vector = torch.tensor(self.vectorizer.transform([" ".join(data)]).toarray(), dtype=torch.float)
                 logits = self.model(tfidf_vector)
             else:
+                #convert to tfidf vector
                 tfidf_vector = self.compute_tfidf_vector(data)
                 logits = self.model(tfidf_vector.unsqueeze(0))
-            predicted_class = torch.argmax(logits, dim=1).item()
+
+            #predict class
+            predicted_class = torch.argmax(logits, dim=1).item() 
         return predicted_class
