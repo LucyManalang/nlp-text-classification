@@ -29,6 +29,8 @@ if args.task == "imdb":
         model = NBBaseline(train_data)
     elif args.model == "tfidf":
         model = TfIdf(train_data)
+    elif args.model == "tfidf":
+        model = TfIdf(train_data, scikit_learn=True)
 
     labeled_data = list(dataset.get_dev_examples())
     true_labels = [(t[0], t[1]) for t in labeled_data]
@@ -61,6 +63,8 @@ elif args.task == "author-id":
             models.append(NBBaseline(problem))
         elif args.model == "tfidf":
             models.append(TfIdf(problem))
+        elif args.model == "tfidf-scikit":
+            models.append(TfIdf(problem, scikit_learn=True))
     
     test_data = list(dataset.get_test_problems())
     test_problems = []
