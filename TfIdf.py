@@ -26,19 +26,21 @@ class TfIdf:
     def term_frequency(self, data : Sequence[str]) -> torch.Tensor:
         term_freq = torch.zeros(len(self.vocab))
         frequencies = Counter(data) # gets the counts of each word in the class
+        max_freq = max(frequencies.values())
 
         for word, count in frequencies.items():
             if word in self.vocab:
-                term_freq[self.vocab[word]] = count / len(data)
+                term_freq[self.vocab[word]] = (1 + math.log(count)) / max_freq
 
         return term_freq
     
     def inverse_document_frequency(self) -> torch.Tensor:
         idf = torch.zeros(len(self.vocab))
+        epsilon = 1e-6 # avoids log(0)
 
         for word in self.vocab:
             doc_freq = sum(1 for v in self.class_vocab.values() if word in v)
-            idf[self.vocab[word]] = math.log(len(self.class_data) / (1 + doc_freq)) 
+            idf[self.vocab[word]] = math.log((len(self.class_data) + epsilon) / (1 + doc_freq))
         return idf
     
     def compute_tfidf_vector(self, data: Sequence[str]) -> torch.Tensor:
