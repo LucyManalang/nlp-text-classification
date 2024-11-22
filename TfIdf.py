@@ -20,8 +20,8 @@ class TfIdf:
         self.idf = self.inverse_document_frequency() # inverse document frequency for each word
         self.tfidf_vectors = torch.stack([self.compute_tfidf_vector(self.class_data[c]) for c in self.classes]) # vector representation of tf-idf
 
-        self.model = LogisticRegression(len(self.vocab), self.classes, self.vocab, self.tfidf_vectors)
-        self.model.train_logistic_regression()
+        self.model = LogisticRegression(len(self.vocab), len(self.classes))
+        self.model.train_model(self.tfidf_vectors, torch.tensor([c for c in self.classes], dtype=torch.long))
 
     def term_frequency(self, data : Sequence[str]) -> torch.Tensor:
         term_freq = torch.zeros(len(self.vocab))
@@ -51,6 +51,6 @@ class TfIdf:
         self.model.eval()  
         with torch.no_grad():
             tfidf_vector = self.compute_tfidf_vector(data)
-            logits = self.model(tfidf_vector.unsqueeze(0))  # Add batch dimension
+            logits = self.model(tfidf_vector.unsqueeze(0))  # add batch dimension
             predicted_class = torch.argmax(logits, dim=1).item()
         return predicted_class

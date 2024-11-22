@@ -31,9 +31,8 @@ if args.task == "imdb":
         model = TfIdf(train_data)
 
     labeled_data = list(dataset.get_dev_examples())
-    true_labels = [(" ".join(t[0]), t[1]) for t in labeled_data]
-    unlabeled_data = [t[0] for t in labeled_data]
-    predicted_labels = [(" ".join(sentence), model.label(sentence)) for sentence in unlabeled_data]
+    true_labels = [(t[0], t[1]) for t in labeled_data]
+    predicted_labels = [(t[0], model.label(t[0])) for t in labeled_data]
     if args.measure == "acc":
         print("acc: {:.3}".format(100 * accuracy(true_labels, predicted_labels))) 
     elif args.measure == "precision":
@@ -42,16 +41,18 @@ if args.task == "imdb":
         print("recall: {:.3}".format(100 * recall(true_labels, predicted_labels))) 
     elif args.measure == "f1":
         print("f1: {:.3}".format(100 * f1(true_labels, predicted_labels))) 
+    elif args.measure == "debug":
+        print(debug(true_labels, predicted_labels))
 
 elif args.task == "author-id":
-    dataset = AuthorIDData("/data/author-id/") 
+    dataset = AuthorIDData("data/author-id/") 
     train_data = list(dataset.get_train_problems()) 
     train_problems = []
     for triplet in train_data:
         problem = []
         for candidate, data in triplet[0].items():
             for sequence in data:
-                problem.append((sequence, int(candidate[-5:])))
+                problem.append((sequence, int(candidate[-5:]) - 1))
         train_problems.append(problem)
             
     models = []
@@ -61,7 +62,46 @@ elif args.task == "author-id":
         elif args.model == "tfidf":
             models.append(TfIdf(problem))
     
+    test_data = list(dataset.get_test_problems())
+    test_problems = []
+    for triplet in test_data:
+        problem = []
+        for candidate, data in triplet[0].items():
+            for sequence in data:
+                problem.append((sequence, int(candidate[-5:]) - 1))
+        test_problems.append(problem)
     
+    for problem, model in zip(test_problems, models):
+        true_labels = [(t[0], t[1]) for t in problem]
+        true_candidates = {t[1] : [] for t in true_labels}
+        for t in true_labels:
+            true_candidates[t[1]].append(t)
+        
+        for candidate in true_candidates.values():
+            predicted_labels = [(t[0], model.label(t[0])) for t in candidate]
+            if args.measure == "acc":
+                print("acc: {:.3}".format(100 * accuracy(candidate, predicted_labels)))
+            if args.measure == "precision":
+                print("precision: {:.3}".format(100 * precision(candidate, predicted_labels)))
+            if args.measure == "recall":
+                print("recall: {:.3}".format(100 * recall(candidate, predicted_labels)))
+            if args.measure == "debug":
+                print(debug(candidate, predicted_labels))
     
+    if args.measure == "f1":
+        total_f1 = 0
+        for problem, model in zip(test_problems, models):
+            true_labels = [(t[0], t[1]) for t in problem]
+            true_candidates = {t[1] : [] for t in true_labels}
+            for t in true_labels:
+                true_candidates[t[1]].append(t)
 
+            problem_f1 = 0
+            for candidate in true_candidates.values():
+                predicted_labels = [(t[0], model.label(t[0])) for t in candidate]
+                problem_f1 += f1(candidate, predicted_labels)
+            total_f1 += problem_f1 / len(true_candidates)
+        total_f1 /= len(test_problems)
+        print("f1: {:.3}".format(100 * total_f1))
+                
 

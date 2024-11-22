@@ -3,28 +3,22 @@ import torch.nn as nn
 from typing import Mapping
 
 class LogisticRegression(nn.Module): # used https://pytorch.org/tutorials/beginner/nlp/deep_learning_tutorial.html as a reference
-    def __init__(self, input_size : int, classes : set[int], vocab : Mapping[str, int], vector : torch.Tensor):
-        self.classes = classes
-        self.vocab = vocab
-        self.vector = vector
-
+    def __init__(self, input_size : int, num_classes : int):
         super(LogisticRegression, self).__init__()
-        self.linear = nn.Linear(input_size, len(classes))
+        self.linear = nn.Linear(input_size, num_classes)
     
     def forward(self, x : torch.Tensor) -> torch.Tensor:
         return self.linear(x)
     
-    
-    def train_logistic_regression(self, epochs : int = 100, loss: float = 0.01) -> None: # based off of stochastic gradient descent in Jurafsky & Martin
-        x = self.vector 
-        y = torch.tensor([c for c in self.classes], dtype=torch.long) # class labels
-
+    def train_model(self, x_train: torch.Tensor, y_train: torch.Tensor, epochs : int = 100, loss: float = 0.01) -> None: # based off of stochastic gradient descent in Jurafsky & Martin
         loss_fn = nn.CrossEntropyLoss()
 
         for epoch in range(epochs):
-            logits = self(x)
-            loss = loss_fn(logits, y)
+            #forward pass
+            logits = self(x_train)
+            loss = loss_fn(logits, y_train)
 
+            #backward pass
             self.zero_grad()
             loss.backward()
 
