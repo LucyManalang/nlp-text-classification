@@ -44,7 +44,6 @@ def precision(true_labels : Sequence[tuple[Iterable[str], int]], predicted_label
             true_positives += 1
         if t[1] == true_label:
             actual_positives += 1
-    
     return true_positives / actual_positives if actual_positives > 0 else 0.0
 
 def f1(true_labels : Sequence[tuple[Iterable[str], int]], predicted_labels : Sequence[tuple[Iterable[str], int]]) -> float:
