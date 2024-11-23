@@ -79,7 +79,7 @@ elif args.task == "author-id":
                 problem.append((sequence, int(candidate[-5:]) - 1))
         test_problems.append(problem)
     
-    total_f1 = 0
+    total_avg = 0
     
     # the index-based storage of the test data and the models allows us to zip them together
     for problem, model in zip(test_problems, models):
@@ -88,26 +88,32 @@ elif args.task == "author-id":
         for t in true_labels:
             true_candidates[t[1]].append(t)
         
-        problem_f1 = 0
+        problem_avg = 0
 
         # measure the performance of the model (for each problem)
         for candidate in true_candidates.values():
             predicted_labels = [(t[0], model.label(t[0])) for t in candidate]
             if args.measure == "acc":
                 print("acc: {:.3}".format(100 * accuracy(candidate, predicted_labels)))
+                # problem_avg += accuracy(candidate, predicted_labels)
             if args.measure == "precision":
                 print("precision: {:.3}".format(100 * precision(candidate, predicted_labels)))
+                # problem_avg += precision(candidate, predicted_labels)
             if args.measure == "recall":
                 print("recall: {:.3}".format(100 * recall(candidate, predicted_labels)))
+                # problem_avg += recall(candidate, predicted_labels)
             if args.measure == "f1":
-                problem_f1 += f1(candidate, predicted_labels)
+                problem_avg += f1(candidate, predicted_labels)
             if args.measure == "debug":
                 print(debug(candidate, predicted_labels))
-        total_f1 += problem_f1 / len(true_candidates)
-    
+        total_avg += problem_avg / len(true_candidates)
+    total_avg /= len(test_problems)
+
     # f1 is macro-averaged across all problems, so it is calculated sepera
     if args.measure == "f1":
-        total_f1 /= len(test_problems)
-        print("f1: {:.3}".format(100 * total_f1))
+        print("f1: {:.3}".format(100 * total_avg))
+    
+    #used for macro-averaging across problems
+    # print(args.measure, ": ", total_avg)
                 
 
